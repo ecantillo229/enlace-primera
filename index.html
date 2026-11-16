@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#d7262b">
+  <title>Enlace Primera St 99.2</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Enlace Primera">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="app" data-view="home">
+  <header class="brandbar">
+    <img class="logo" src="img/logo.png" alt="Primera Stereo 99.2 FM">
+    <div class="brand-title">
+      <b>Enlace</b>
+      <span>Primera Stereo 99.2 FM</span>
+    </div>
+    <div class="brand-right">
+      <span class="sig" id="sig-status">Conectando…</span>
+    </div>
+  </header>
+  <nav class="redbar">
+    <button class="tab active" data-view="home" type="button">Inicio</button>
+    <button class="tab live-tab" data-view="live" type="button" hidden><span class="live-dot"></span> En vivo <b id="live-count">0</b></button>
+    <span class="spacer"></span>
+    <span class="tag">DEMO 1.4</span>
+    <a class="tab desktop-only" href="ajustes.html">Configuración</a>
+  </nav>
+
+  <main class="app-main">
+    <div class="install-card" id="install-card" hidden>
+      <img src="icons/icon-192.png" alt="">
+      <div id="install-text"><b>Instala Enlace Primera</b>Conéctate más rápido la próxima vez.</div>
+      <button class="btn sm" id="install-btn" type="button" hidden>Instalar</button>
+      <button class="chip" id="install-close" type="button" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="notice" id="audio-unlock" hidden>Haz clic en cualquier parte de la ventana para activar el audio.</div>
+
+    <!-- ================================================= INICIO -->
+    <div id="home-view">
+      <section class="hero">
+        <!-- Este equipo -->
+        <div class="hero-me">
+          <div class="eyebrow">Este equipo</div>
+          <div class="id-row">
+            <b class="big-id mono" id="my-id">— — —</b>
+            <button class="btn sm ghost" id="copy-id" type="button">Copiar</button>
+          </div>
+          <input class="name-input" id="my-name" maxlength="40" placeholder="Nombre de este equipo" aria-label="Nombre de este equipo">
+          <div class="recv-only">
+            <div class="pw-row">
+              <span class="muted small">Contraseña</span>
+              <b class="mono pw-value" id="pw-value">sin definir</b>
+              <button class="btn sm" id="pw-change" type="button">Definir</button>
+            </div>
+            <form class="pw-form" id="pw-form" hidden>
+              <input type="password" id="pw-new" minlength="8" maxlength="64" placeholder="Nueva contraseña (mínimo 8 caracteres)" autocomplete="new-password">
+              <button class="btn primary sm" type="submit">Guardar</button>
+              <button class="btn sm ghost" type="button" id="pw-cancel">Cancelar</button>
+            </form>
+            <label class="check small"><input type="checkbox" id="pw-temp"> Contraseña temporal (cambia cada vez que se abre la app)</label>
+            <details class="inline-details">
+              <summary>Recepción de conexiones</summary>
+              <label class="radio-line"><input type="radio" name="accept" value="auto"> Aceptar automáticamente con contraseña correcta</label>
+              <label class="radio-line"><input type="radio" name="accept" value="manual"> Preguntarme antes de aceptar</label>
+              <label>Solo permitir estos ID (opcional, separados por coma)
+                <input id="allow-list" placeholder="123 456 789, 987 654 321" inputmode="numeric">
+              </label>
+              <button class="btn sm" id="save-accept" type="button">Guardar</button>
+            </details>
+          </div>
+          <p class="muted small mobile-only">Desde el teléfono te conectas al estudio. Para recibir conexiones usa la app de Windows.</p>
+        </div>
+
+        <!-- Conectar -->
+        <div class="hero-connect">
+          <div class="eyebrow">Conectar a otro equipo</div>
+          <form id="connect-form" class="connect-row">
+            <input id="target-id" class="mono id-input" inputmode="numeric" maxlength="11" placeholder="ID del equipo" autocomplete="off" aria-label="ID del equipo remoto">
+            <button class="btn primary big" type="submit">Conectar</button>
+          </form>
+          <div class="hint connect-status" id="connect-status" hidden>
+            <span id="connect-status-text"></span>
+            <button class="chip" id="connect-cancel" type="button">Cancelar</button>
+          </div>
+          <div class="quality-row">
+            <label>Perfil de audio
+              <select id="profile">
+                <option value="lowlat">Baja latencia — mono 64 kbps, 10 ms</option>
+                <option value="voice">Voz — mono 64 kbps, 20 ms</option>
+                <option value="hq">Alta calidad — estéreo 128 kbps</option>
+                <option value="max">Máxima calidad — estéreo 192 kbps (música)</option>
+              </select>
+            </label>
+            <label>Bitrate máximo
+              <select id="bitrate"></select>
+            </label>
+          </div>
+          <p class="muted small" id="bitrate-hint"></p>
+          <div>
+            <div class="field-label">Dirección del audio</div>
+            <div class="seg" id="direction" role="radiogroup" aria-label="Dirección del audio">
+              <label><input type="radio" name="direction" value="both"><span>⇄ Ida y vuelta</span></label>
+              <label><input type="radio" name="direction" value="send"><span>→ Solo enviar mi audio</span></label>
+              <label><input type="radio" name="direction" value="listen"><span>← Solo escuchar</span></label>
+            </div>
+            <p class="muted small" id="direction-hint"></p>
+          </div>
+        </div>
+      </section>
+
+      <div class="home-cols">
+        <section class="card contacts-card">
+          <div class="card-head"><h2>Conexiones guardadas</h2></div>
+          <ul class="contacts" id="contacts"></ul>
+          <div class="empty-state" id="contacts-empty">
+            <b>Aún no hay conexiones guardadas</b>
+            <span>Al conectarte marca «Recordar esta conexión» y la próxima vez entras con un clic.</span>
+          </div>
+        </section>
+
+        <div class="side-col">
+          <section class="card audio-card">
+            <div class="card-head"><h2>Mi audio</h2><button class="btn sm ghost" id="tone-btn" type="button">Probar salida</button></div>
+            <div class="banner-mini" id="perm-banner" hidden>
+              <span>Permite el micrófono para elegir tus dispositivos.</span>
+              <button class="btn sm primary" id="perm-btn" type="button">Permitir</button>
+            </div>
+            <label>Entrada (micrófono o bus mix-minus)
+              <select id="def-in"></select>
+            </label>
+            <label>Salida (audífonos o canal de consola)
+              <select id="def-out"></select>
+            </label>
+            <div class="meter" id="test-meter"><div class="cover"></div><span class="db">−∞</span></div>
+            <label class="check small"><input type="checkbox" id="proc"> Cancelación de eco, supresión de ruido y ganancia automática</label>
+          </section>
+
+          <section class="card net-card">
+            <div class="card-head"><h2>Mi red</h2><button class="btn sm ghost" id="net-refresh" type="button">Volver a detectar</button></div>
+            <dl class="net-grid">
+              <dt>IPv4 pública</dt><dd class="mono" id="net-v4">Detectando…</dd>
+              <dt>IPv6 pública</dt><dd class="mono" id="net-v6">—</dd>
+              <dt>IP local</dt><dd class="mono" id="net-local">—</dd>
+              <dt>NAT</dt><dd id="net-nat">—</dd>
+              <dt>Servidor</dt><dd class="mono" id="net-server">—</dd>
+            </dl>
+          </section>
+        </div>
+      </div>
+
+      <details class="card history-card">
+        <summary><b>Historial de este equipo</b> <span class="muted small" id="hist-count"></span></summary>
+        <div class="row-end"><span></span><button class="btn sm" id="hist-csv" type="button">Exportar CSV</button></div>
+        <div class="table-wrap"><table class="data"><thead><tr><th>Fecha</th><th>Tipo</th><th>Detalle</th><th>Duración</th></tr></thead><tbody id="history"></tbody></table></div>
+      </details>
+    </div>
+
+    <!-- ================================================= EN VIVO -->
+    <div id="live-view">
+      <section id="links" class="links"></section>
+    </div>
+  </main>
+
+  <!-- Diálogo de contraseña -->
+  <dialog id="pw-dialog" class="modal">
+    <form method="dialog" id="pw-dialog-form">
+      <h2>Conectar a <span class="mono" id="dlg-id"></span></h2>
+      <p class="hint" id="dlg-msg" hidden></p>
+      <label>Contraseña del equipo
+        <input type="password" id="dlg-pw" autocomplete="current-password" required>
+      </label>
+      <label class="check"><input type="checkbox" id="dlg-remember" checked> Recordar esta conexión</label>
+      <label id="dlg-name-wrap">Nombre para la conexión guardada
+        <input id="dlg-name" maxlength="40" placeholder="Ej.: Estudio principal">
+      </label>
+      <div class="row-end">
+        <button class="btn ghost" value="cancel" formnovalidate>Cancelar</button>
+        <button class="btn primary" value="ok" id="dlg-ok">Conectar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Conexión entrante -->
+  <dialog id="in-dialog" class="modal">
+    <h2><span class="bell">●</span> Conexión entrante</h2>
+    <p><b id="in-name"></b><br><span class="muted mono" id="in-id"></span></p>
+    <div class="row-end">
+      <button class="btn danger ghost" id="in-reject" type="button">Rechazar</button>
+      <button class="btn primary" id="in-accept" type="button">Aceptar</button>
+    </div>
+  </dialog>
+
+  <!-- Enlace en vivo -->
+  <template id="tpl-link">
+    <article class="link">
+      <header class="link-head">
+        <div class="link-who">
+          <div class="avatar"></div>
+          <div>
+            <h3 class="l-name"></h3>
+            <div class="muted small"><span class="mono l-id"></span> · <span class="l-platform"></span> · <span class="l-profile"></span></div>
+            <span class="dir-badge l-dir"></span>
+          </div>
+        </div>
+        <span class="state l-state">Conectando…</span>
+      </header>
+      <div class="notice" hidden></div>
+      <div class="link-body">
+        <div class="link-main">
+          <div class="meter-block">
+            <div class="meter-label"><span>Envío (mi micrófono)</span><button class="btn sm toggle" data-act="mute-send">Silenciar envío</button></div>
+            <div class="meter big m-send"><div class="cover"></div><span class="db">−∞</span></div>
+            <label class="gain">Ganancia <input type="range" class="g-send" min="-24" max="12" step="1" value="0"> <span class="g-send-v mono">0 dB</span></label>
+          </div>
+          <div class="meter-block">
+            <div class="meter-label"><span>Recibido</span><button class="btn sm toggle" data-act="mute-recv">Silenciar retorno</button></div>
+            <div class="meter big m-recv"><div class="cover"></div><span class="db">−∞</span></div>
+            <label class="gain">Volumen <input type="range" class="g-recv" min="0" max="100" step="1" value="100"> <span class="g-recv-v mono">100 %</span></label>
+          </div>
+          <div class="peer-muted muted small" hidden>El otro equipo silenció su envío</div>
+          <div class="io">
+            <label class="in-wrap">Entrada <select class="in-dev"></select></label>
+            <label class="out-wrap">Salida <select class="out-dev"></select></label>
+          </div>
+          <div class="stats">
+            <div><span>Protocolo</span><b class="st-proto">—</b></div>
+            <div><span>Ruta</span><b class="st-route">—</b></div>
+            <div><span>Latencia</span><b class="st-rtt">—</b></div>
+            <div><span>Jitter / búfer</span><b class="st-jitter">—</b></div>
+            <div><span>Pérdida</span><b class="st-loss">—</b></div>
+            <div><span>Envío / recepción</span><b class="st-br">—</b></div>
+            <div><span>Códec</span><b class="st-codec">—</b></div>
+            <div><span>Direcciones</span><b class="st-cand mono small">—</b></div>
+          </div>
+          <div class="alerts"></div>
+        </div>
+        <aside class="link-side">
+          <div class="side-title">Mensajes de producción <span class="muted small">(no salen al aire)</span></div>
+          <div class="chat-log"></div>
+          <div class="quick">
+            <button class="chip" type="button">Entras en 30 segundos</button>
+            <button class="chip" type="button">Estás al aire</button>
+            <button class="chip" type="button">Vamos a pausa</button>
+            <button class="chip" type="button">Te escucho bajo</button>
+          </div>
+          <form class="chat-form">
+            <input class="chat-input" maxlength="500" placeholder="Escribe un mensaje…">
+            <button class="btn sm" type="submit">Enviar</button>
+          </form>
+          <button class="btn danger block hang" data-act="hangup">Colgar</button>
+        </aside>
+      </div>
+      <audio class="remote-audio" autoplay playsinline></audio>
+    </article>
+  </template>
+
+  <script src="vendor/peerjs.min.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
